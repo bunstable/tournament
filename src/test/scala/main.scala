@@ -113,12 +113,45 @@ class MatchSpec extends FunSpec with ShouldMatchers {
   describe("Match") {
     describe("determinedSubMatches") {
       it("should return the Set of all subMatches for whom the participants involved are known / devrait retourner la collection de tous les sous-matchs pour lesquels les participants sont connus") (pending)
+      val matchTest1 = SimpleMatch("P1", "P2")
+      val matchTest2 = SimpleMatch("P3", "P4")
+      val matchTest3 = SimpleMatch("P5", "P6")
+      val matchTest4 = SimpleMatch("P7", "P8")
+      
+      val matchComposite1 = CompositeMatch(matchTest1, matchTest2)
+      val matchComposite2 = CompositeMatch(matchTest3, matchTest4)
+      val matchComposite3 = CompositeMatch(matchComposite1, matchComposite2)
+      //DONT UNDERSTAND
     }
     describe("leafSubMatches") {
       it("should return the matches from the first round / retourner les matchs de la premiere ronde") (pending)
+      val matchTest1 = SimpleMatch("P1", "P2")
+      val matchTest2 = SimpleMatch("P3", "P4")
+      val matchTest3 = SimpleMatch("P5", "P6")
+      val matchTest4 = SimpleMatch("P7", "P8")
+      
+      val matchComposite1 = CompositeMatch(matchTest1, matchTest2)
+      val matchComposite2 = CompositeMatch(matchTest3, matchTest4)
+      val matchComposite3 = CompositeMatch(matchComposite1, matchComposite2)
+      
+      matchComposite1.leafSubMatches should equal (Set(matchTest1, matchTest2))
+      matchComposite2.leafSubMatches should not equal (Set(matchTest1, matchTest2))
+      matchComposite3.leafSubMatches should equal (Set(matchTest1, matchTest2, matchTest3, matchTest4))
     }
     describe("round(Int)") {
       it("return the round corresponding to the specified Int. Rounds are numbered 1 to n where 1 is the first round and n is the round containing this match / retourner la ronde qui correspond au Int recu en parametre. Les rondes sont numerotes de 1 a n ronde, ou 1 est la premiere ronde et n et le match courant") (pending)
+      val matchTest1 = SimpleMatch("P1", "P2")
+      val matchTest2 = SimpleMatch("P3", "P4")
+      val matchTest3 = SimpleMatch("P5", "P6")
+      val matchTest4 = SimpleMatch("P7", "P8")
+      
+      val matchComposite1 = CompositeMatch(matchTest1, matchTest2)
+      val matchComposite2 = CompositeMatch(matchTest3, matchTest4)
+      val matchComposite3 = CompositeMatch(matchComposite1, matchComposite2)
+      
+      matchTest1.round(1) should equal (SimpleMatch("P1", "P2"))
+      matchTest2.round(2) should not equal (SimpleMatch("P1", "P2"))
+      //DONT UNDERSTAND
     }
 
     describe("contenders") {
