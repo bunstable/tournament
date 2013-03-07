@@ -90,10 +90,11 @@ class GenerateTournamentFeatureSpec extends FeatureSpec with ShouldMatchers with
     val constraints = Constraints(defaultRules, availabilities)
     val tournament = generate(constraints, defaultParticipants)
     Then("MatchLocation availabilities are respected / les disponibilites sont respecte")
-    tournament.draw.allMatches.forall { match_ =>
+    val doRespectAvailabilities = tournament.draw.allMatches.forall { match_ =>
       val (matchLocation, day, time) = tournament.schedule(match_)
       constraints.isMatchStartTimeValid(time, matchLocation, day)
     }
+    assert(doRespectAvailabilities)
   }
   
   feature("Randomized draw / Tirage aleatoire") {
