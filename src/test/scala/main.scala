@@ -20,7 +20,7 @@ trait defaults {
 
   /** By default,
     there must be a minimum of 3 hours between each match
-    each match is expected to last 1 hour
+    each match is expected to last 1 hour"should return the Set of all subMatches for whom the participants involved are known / devrait retourner la collection de tous les sous-matchs pour lesquels les participants sont connus"
   */
   val defaultRules = Rules(Duration.standardHours(3), Duration.standardHours(1))
 }
@@ -37,9 +37,23 @@ class GenerateTournamentFeatureSpec extends FeatureSpec with ShouldMatchers with
     }
     scenario("The Number of participants, minimum rest time and MatchLocationAvailability do not admit a solution / Le Nombre de participatns, temps de repos minimum et disponibilites de terrains n'admetent pas une solution") {
       Given("the above scenario / le scenario mentionne ci-haut")
+      val desParticipants = Set("Alice", "Bob", "Chris", "Dante", "Emilio", "Fuit", "Gordon", "Herman")
+      
+      val availabilities = Map(
+      "Court1" -> Map(
+	1 -> ((new LocalTime(9,0), new LocalTime(11,0))),
+	2 -> ((new LocalTime(12,0), new LocalTime(13,0)))
+      ),
+      "Court2" -> Map(
+	1 -> ((new LocalTime(9,0), new LocalTime(11,0))),
+	2 -> ((new LocalTime(12,0), new LocalTime(13,0)))
+      )
+    )
       When("the tournament is generated / le tournoi est genere")
+      val constraints = Constraints(defaultRules, availabilities)
+      val tournament = generate(constraints, desParticipants)
       Then("an IllegalArgumentException is thrown / une IllegalArgumentException est lance")
-      pending
+      evaluating { tournament } should produce [IllegalArgumentException]
     }
   }
   
@@ -47,6 +61,8 @@ class GenerateTournamentFeatureSpec extends FeatureSpec with ShouldMatchers with
     scenario("Number of participants is a power of two / Le nombre de participants est une puissance de deux") {
       Given("A number of participants that is a power of deux / un nombre de participants qui est une puissance de deux")
       When("the tournament is generated / le tournoi est genere")
+      val constraints = Constraints(defaultRules, defaultAvailabilities)
+      val tournament = generate(constraints, defaultParticipants)
       Then("each participant should be required to win the same amount of matches in order to win the tournament / chaque participant devrait avoir a gagner le meme nombre de match afin de gagner le tournoi")
       pending
     }
@@ -57,7 +73,7 @@ class GenerateTournamentFeatureSpec extends FeatureSpec with ShouldMatchers with
       val constraints = Constraints(defaultRules, defaultAvailabilities)
       val tournament = generate(constraints, participantsNotPower)
       Then("each participant should be required to win no more than one less match than any other participant in order to win the tournament / chaque participant devrait avoir a gagner pas plus d'une partie de moins que n'importe quel autre participant afin de remporter le tournoi")
-      evaluating { participantsNotPower.size } should produce [IllegalArgumentException]
+      pending
     }
     scenario("one participant / un seul participant") {
       Given("one participant / un seul participant")
@@ -192,11 +208,16 @@ class MatchSpec extends FunSpec with ShouldMatchers {
   }
 }
 
-class ConstraintsSpec extends FunSpec with ShouldMatchers {
+class ConstraintsSpec extends FunSpec with ShouldMatchers with defaults{
   describe("Constraints") {
     describe("isMatchStartTimeValid") {
       // TODO: Ecrivez les tests qui permettront de valider si le temps de commencement est valide ou non
       // Indice: Il y a au moins 3 cas a traite
+      // A REVOIR POUR LA PAUSE DE 3 HEURES
+      val constraints = Constraints(defaultRules, defaultAvailabilities)
+      constraints.isMatchStartTimeValid(new LocalTime(9, 0), "Court1", 1) should equal (true)
+      constraints.isMatchStartTimeValid(new LocalTime(8, 0), "Court1", 1) should equal (false)
+      constraints.isMatchStartTimeValid(new LocalTime(22, 30), "Court1", 1) should equal (false)
     }
   }
 }
