@@ -65,11 +65,13 @@ class GenerateTournamentFeatureSpec extends FeatureSpec with ShouldMatchers with
   feature("Balanced draw / Tirage balance") {
     scenario("Number of participants is a power of two / Le nombre de participants est une puissance de deux") {
       Given("A number of participants that is a power of deux / un nombre de participants qui est une puissance de deux")
+      val participantsPower = Set("We're","2")
       When("the tournament is generated / le tournoi est genere")
       val constraints = Constraints(defaultRules, defaultAvailabilities)
-      val tournament = generate(constraints, defaultParticipants)
-      Then("each participant should be required to win the same amount of matches in order to win the tournament / chaque participant devrait avoir a gagner le meme nombre de match afin de gagner le tournoi")
-      pending
+      val tournament = generate(constraints, participantsPower)
+      Then("/ chaque participant devrait avoir a gagner le meme nombre de match afin de gagner le tournoi")      
+      
+      //tournament.draw.findMatchWithParticipant(participantsPower(0)) should equal (tournament.draw.findMatchWithParticipant(participantsPower(1)))
     }
     scenario("number of participants is not a power of two / nombre de participants n'est pas une puissance de deux") {
       Given("a number of participants that is not a power of two / un nombre de participants qui n'est pas une puissance de deux")
