@@ -30,16 +30,21 @@ class GenerateTournamentFeatureSpec extends FeatureSpec with ShouldMatchers with
   info("Il est commun dans un tournoi de nature competitive d'avoir un minimum de temps entre les parties qui implique un meme joueur afin de permettre a ce dernier de se reposer.")
   feature("Minimum rest time / Temps minimal de repos") {
     scenario("The number of participants, minimum rest time and MatchLocationAvailabilities admit a solution / Le nombre de partipants, la quantite minimal de repos et les disponibilites de terrains admetent une solution") {
+      
       Given("the above scenario / Le scenario mentionne ci-haut")
+     
       When("the tournament is generated / le tournoi est genere")
+      val constraints = Constraints(defaultRules, defaultAvailabilities)
+      val tournament = generate(constraints, defaultParticipants)
       Then("the tournament respects the minimum amount of rest of all participants / l tournoi respecte la quantite minimal de repos devant etre accorde a chacun des participants")
-      pending
+      evaluating { tournament } should not produce [IllegalArgumentException]
+      
     }
     scenario("The Number of participants, minimum rest time and MatchLocationAvailability do not admit a solution / Le Nombre de participatns, temps de repos minimum et disponibilites de terrains n'admetent pas une solution") {
       Given("the above scenario / le scenario mentionne ci-haut")
-      val desParticipants = Set("Alice", "Bob", "Chris", "Dante", "Emilio", "Fuit", "Gordon", "Herman")
+      val desParticipants = Set("Alice", "Bob", "Chris", "Dante", "Emilio", "Fruit", "Gordon", "Herman", "Isaac", "Jack", "Keith", "Lance")
       
-      val availabilities = Map(
+      val availabilitiesShort = Map(
       "Court1" -> Map(
 	1 -> ((new LocalTime(9,0), new LocalTime(11,0))),
 	2 -> ((new LocalTime(12,0), new LocalTime(13,0)))
@@ -50,7 +55,7 @@ class GenerateTournamentFeatureSpec extends FeatureSpec with ShouldMatchers with
       )
     )
       When("the tournament is generated / le tournoi est genere")
-      val constraints = Constraints(defaultRules, availabilities)
+      val constraints = Constraints(defaultRules, availabilitiesShort)
       val tournament = generate(constraints, desParticipants)
       Then("an IllegalArgumentException is thrown / une IllegalArgumentException est lance")
       evaluating { tournament } should produce [IllegalArgumentException]
