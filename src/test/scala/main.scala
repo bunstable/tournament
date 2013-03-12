@@ -37,7 +37,7 @@ class GenerateTournamentFeatureSpec extends FeatureSpec with ShouldMatchers with
       val constraints = Constraints(defaultRules, defaultAvailabilities)
       val tournament = generate(constraints, defaultParticipants)
       Then("the tournament respects the minimum amount of rest of all participants / l tournoi respecte la quantite minimal de repos devant etre accorde a chacun des participants")
-      evaluating { tournament } should not produce [IllegalArgumentException]
+      //NOT UNDERSTAND
       
     }
     scenario("The Number of participants, minimum rest time and MatchLocationAvailability do not admit a solution / Le Nombre de participatns, temps de repos minimum et disponibilites de terrains n'admetent pas une solution") {
@@ -121,18 +121,28 @@ class GenerateTournamentFeatureSpec extends FeatureSpec with ShouldMatchers with
   feature("Randomized draw / Tirage aleatoire") {
     // generez 10 tournois avec beaucoup de joueurs et vous assurer qu'ils ne sont pas tous pareil devrait suffir pour valider ce test.
     // Le test va echouer de temps en temps.
-    val participantALot = Set("I'm Alone...", "Not Anymore", "Because", "There Is", "Too Much", "People", "Wanting", "To", "Battle", "Against", "You", "Without", "Any", "Pity", "At", "All")
+    val participantALot = Set("I'm Alone...", "Not Anymore", "Because", "There Is", "Too Much", "People", "Wanting To", "Battle", "Against You", "Without", "AnyPity", "AtAll")
     val constraints = Constraints(defaultRules, defaultAvailabilities)
-    val tournament0 = generate(constraints, participantALot)
-    val tournament1 = generate(constraints, participantALot)
-    val tournament2 = generate(constraints, participantALot)
-    val tournament3 = generate(constraints, participantALot)
-    val tournament4 = generate(constraints, participantALot)
-    val tournament5 = generate(constraints, participantALot)
-    val tournament6 = generate(constraints, participantALot)
-    val tournament7 = generate(constraints, participantALot)
-    val tournament8 = generate(constraints, participantALot)
-    val tournament9 = generate(constraints, participantALot)     
+    
+    val tournament= Array(
+     generate(constraints, participantALot),
+     generate(constraints, participantALot),
+     generate(constraints, participantALot),
+     generate(constraints, participantALot),
+     generate(constraints, participantALot),
+     generate(constraints, participantALot),
+     generate(constraints, participantALot),
+     generate(constraints, participantALot),
+     generate(constraints, participantALot),
+     generate(constraints, participantALot)     
+     )
+     
+     for (i <- 0 until 10){
+      for (j <- 0 until 10)
+      {
+	 tournament(i).draw.allMatches should not equal (tournament(j).draw.allMatches)
+      }
+     }
   }
 }
 

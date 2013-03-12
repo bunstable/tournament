@@ -63,7 +63,10 @@ object Tournament {
     def determinedSubMatches: Set[SimpleMatch] = ???
     def leafSubMatches: Set[SimpleMatch] = Set()
     def round(nb: Int): Option[Set[Match]] = ???
-    def contenders: Set[Participant] = ???
+    def contenders: Set[Participant] = {
+      if (this.winner != None) Set(this.winner.get) 
+      else return null
+      }
     def update(winner: Participant): Match = ???
     def findMatchWithParticipant(participant: Participant): Match = ???
     def allMatches: Set[Match] = Set(this)
@@ -77,7 +80,7 @@ object Tournament {
     def determinedSubMatches: Set[SimpleMatch] = ???
     def leafSubMatches: Set[SimpleMatch] = ???
     def round(nb: Int): Option[Set[Match]] = ???
-    def contenders: Set[Participant] = ???
+    def contenders: Set[Participant] = Set(only)
     def update(winner: Participant): Match = ???
     def findMatchWithParticipant(participant: Participant): Match = ???
     def allMatches: Set[Match] = ???
@@ -92,11 +95,14 @@ object Tournament {
     def determinedSubMatches: Set[SimpleMatch] = ???
     def leafSubMatches: Set[SimpleMatch] = ???
     def round(nb: Int): Option[Set[Match]] = ???
-    def contenders: Set[Participant] = ???
+    def contenders: Set[Participant] = {
+      if (this.winner != None) Set(this.winner.get) 
+      else return null
+      }
     def update(match_ : Match, winner: Participant): Match = ???
     def update(winner: Participant): Match = ???
     def findMatchWithParticipant(participant: Participant): Match = ???
-    def allMatches: Set[Match] = ???
+    def allMatches: Set[Match] = first.allMatches ++ second.allMatches
     def nbRounds: Int = ???
   }
   
