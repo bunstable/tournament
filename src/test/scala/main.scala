@@ -32,12 +32,13 @@ class GenerateTournamentFeatureSpec extends FeatureSpec with ShouldMatchers with
     scenario("The number of participants, minimum rest time and MatchLocationAvailabilities admit a solution / Le nombre de partipants, la quantite minimal de repos et les disponibilites de terrains admetent une solution") {
       
       Given("the above scenario / Le scenario mentionne ci-haut")
-     
-      When("the tournament is generated / le tournoi est genere")
+   
+      When("the tournament is generated / le tournoi est genere")   
       val constraints = Constraints(defaultRules, defaultAvailabilities)
       val tournament = generate(constraints, defaultParticipants)
       Then("the tournament respects the minimum amount of rest of all participants / l tournoi respecte la quantite minimal de repos devant etre accorde a chacun des participants")
-      //NOT UNDERSTAND
+      
+      assert(constraints.isMatchStartTimeValid(new LocalTime(9, 0), new MatchLocation("Court1"),1) ==true)
       
     }
     scenario("The Number of participants, minimum rest time and MatchLocationAvailability do not admit a solution / Le Nombre de participatns, temps de repos minimum et disponibilites de terrains n'admetent pas une solution") {
