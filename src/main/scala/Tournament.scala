@@ -1,6 +1,7 @@
 package com.github.jedesah
 
 import com.github.nscala_time.time.Imports._
+import com.github.jedesah
 
 /** Representation of a simple elimination tournament */
 object Tournament {
@@ -16,14 +17,21 @@ object Tournament {
   type Availabilities = Map[MatchLocation, Availability]
   type Participant = String
 
-  case class Rules(minTimeBeetweenMatch: Duration, expectedMatch:Duration)
+  case class Rules(minTimeBetweenMatch: Duration, expectedMatch:Duration)
 
   case class Constraints(rules: Rules, availabilities: Availabilities) {
     /** Determines whether the startTime, location and day is valid given these constraints.
 	Carefull, if the MatchLocation is available from 9 am. to 5 pm. and a match is scheduled for 5 pm.
 	Then the match's scheduling would be invalid since the MatchLocation is longer available at the start of the match.
     */
-    def isMatchStartTimeValid(startTime: LocalTime, location: MatchLocation, day: Day):Boolean = ???
+    def isMatchStartTimeValid(startTime: LocalTime, location: MatchLocation, day: Day):Boolean = {
+    val time :TimeSlot = availabilities.get(location).get.get(day).get
+    val timeDebut: Int = time._1.getHourOfDay*60 + time._1.getMinuteOfHour
+    val timeFin :Int = time._2.getHourOfDay*60 + time._2.getMinuteOfHour - rules.expectedMatch.getStandardMinutes.toInt
+    val timeMatch: Int = startTime.getHourOfDay*60 + startTime.getMinuteOfHour
+
+      timeMatch >= timeDebut && timeMatch <= timeFin
+    }
   }
 
   case class Tournament(draw: Match, schedule: Map[Match, (MatchLocation, Day, LocalTime)])
@@ -32,7 +40,7 @@ object Tournament {
     /** The winner of this Match, None, if the match has not been played yet and has no winner or
 	Some(Participant) if the match has been played and won
     */
-    val winner: Option[Participant] = None
+    var winner: Option[Participant] = None
     /** Returns all Matches to play. ie. the matchs for whom the two participants is already know. */
     def determinedSubMatches: Set[SimpleMatch]
     /** Returns all SimpleMatchs contained directly or indirectly by this Match */
@@ -58,19 +66,16 @@ object Tournament {
   case class SimpleMatch(first: Participant, second: Participant) extends Match {
     def this(first: Participant, second: Participant, winner_ : Participant) = {
       this(first, second)
-      val winner = Some(winner_)
+      winner = Some(winner_)
     }
     def determinedSubMatches: Set[SimpleMatch] = ???
     def leafSubMatches: Set[SimpleMatch] = Set()
     def round(nb: Int): Option[Set[Match]] = ???
-    def contenders: Set[Participant] = {
-      if (this.winner != None) Set(this.winner.get) 
-      else return null
-      }
-    def update(winner: Participant): Match = ???
+    def contenders: Set[Participant] = ???
+    def update(winner: Participant): Match = new SimpleMatch(first, second, winner)
     def findMatchWithParticipant(participant: Participant): Match = ???
     def allMatches: Set[Match] = Set(this)
-    def nbRounds: Int = ???
+    def nbRounds: Int = 1
   }
   /** When a tournament does not have a number of participants that is a power of 2, it is necessary to give some
       participants a bye. A bye means a partcipant does not have to participate in the first round of the tournament,
@@ -80,29 +85,26 @@ object Tournament {
     def determinedSubMatches: Set[SimpleMatch] = ???
     def leafSubMatches: Set[SimpleMatch] = ???
     def round(nb: Int): Option[Set[Match]] = ???
-    def contenders: Set[Participant] = Set(only)
-    def update(winner: Participant): Match = ???
+    def contenders: Set[Participant] = ???
+    def update(winner: Participant): Match = this
     def findMatchWithParticipant(participant: Participant): Match = ???
     def allMatches: Set[Match] = ???
-    def nbRounds: Int = ???
+    def nbRounds: Int = 1
   }
   /** A CompositeMatch is a Match that opposes the winner of the first match against the winner of the second. */
   case class CompositeMatch(first: Match, second: Match) extends Match {
     def this(first: Match, second: Match, winner_ : Participant) = {
       this(first, second)
-      val winner = Some(winner_)
+      winner = Some(winner_)
     }
     def determinedSubMatches: Set[SimpleMatch] = ???
     def leafSubMatches: Set[SimpleMatch] = ???
     def round(nb: Int): Option[Set[Match]] = ???
-    def contenders: Set[Participant] = {
-      if (this.winner != None) Set(this.winner.get) 
-      else return null
-      }
+    def contenders: Set[Participant] = ???
     def update(match_ : Match, winner: Participant): Match = ???
     def update(winner: Participant): Match = ???
     def findMatchWithParticipant(participant: Participant): Match = ???
-    def allMatches: Set[Match] = first.allMatches ++ second.allMatches
+    def allMatches: Set[Match] = ???
     def nbRounds: Int = ???
   }
   
