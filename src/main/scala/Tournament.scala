@@ -2,6 +2,7 @@ package com.github.jedesah
 
 import com.github.nscala_time.time.Imports._
 import com.github.jedesah
+import util.matching.Regex.Match
 
 /** Representation of a simple elimination tournament */
 object Tournament {
@@ -21,7 +22,7 @@ object Tournament {
 
   case class Constraints(rules: Rules, availabilities: Availabilities) {
     /** Determines whether the startTime, location and day is valid given these constraints.
-	Carefull, if the MatchLocation is available from 9 am. to 5 pm. and a match is scheduled for 5 pm.
+	Careful, if the MatchLocation is available from 9 am. to 5 pm. and a match is scheduled for 5 pm.
 	Then the match's scheduling would be invalid since the MatchLocation is longer available at the start of the match.
     */
     def isMatchStartTimeValid(startTime: LocalTime, location: MatchLocation, day: Day):Boolean = {
@@ -41,11 +42,11 @@ object Tournament {
 	Some(Participant) if the match has been played and won
     */
     var winner: Option[Participant] = None
-    /** Returns all Matches to play. ie. the matchs for whom the two participants is already know. */
+    /** Returns all Matches to play. ie. the matches for whom the two participants is already know. */
     def determinedSubMatches: Set[SimpleMatch]
     /** Returns all SimpleMatchs contained directly or indirectly by this Match */
     def leafSubMatches: Set[SimpleMatch]
-    /** Returns all matchs that belong to a specified round or None if the round number is invalid. */
+    /** Returns all matches that belong to a specified round or None if the round number is invalid. */
     def round(nb: Int): Option[Set[Match]]
     /** Returns all participants who are still contenders for the title. ie they have not lost any of their
     matches as we are modeling a simple elimination tournament.
@@ -59,7 +60,7 @@ object Tournament {
     def allMatches: Set[Match]
     /** Returns the number of rounds in this Match
 	Returns 1 if this match is a ByeMatch or a simple Match;
-	Returns the depth of the Tree if this Match is a compisite Match
+	Returns the depth of the Tree if this Match is a composite Match
     */
     def nbRounds: Int
   }
@@ -68,12 +69,21 @@ object Tournament {
       this(first, second)
       winner = Some(winner_)
     }
-    def determinedSubMatches: Set[SimpleMatch] = ???
+    def determinedSubMatches: Set[SimpleMatch] = Set(this)
     def leafSubMatches: Set[SimpleMatch] = Set()
-    def round(nb: Int): Option[Set[Match]] = ???
-    def contenders: Set[Participant] = ???
+    def round(nb: Int): Option[Set[Match]] = {
+      if(this.nbRounds == nb)
+        Option(Set(this))
+      else
+        Option(Set())
+    }
+    def contenders: Set[Participant] = Set(this.winner.toString())
     def update(winner: Participant): Match = new SimpleMatch(first, second, winner)
-    def findMatchWithParticipant(participant: Participant): Match = ???
+    def findMatchWithParticipant(participant: Participant): Match = ???/*{
+      if (this.first == participant | this.second == participant)
+        this
+      else
+        ???*/
     def allMatches: Set[Match] = Set(this)
     def nbRounds: Int = 1
   }
@@ -82,13 +92,18 @@ object Tournament {
       they simply play against one of the winners of the first round.
   */
   case class ByeMatch(only: Participant) extends Match {
-    def determinedSubMatches: Set[SimpleMatch] = ???
-    def leafSubMatches: Set[SimpleMatch] = ???
-    def round(nb: Int): Option[Set[Match]] = ???
-    def contenders: Set[Participant] = ???
+    def determinedSubMatches: Set[SimpleMatch] = Set()
+    def leafSubMatches: Set[SimpleMatch] = Set()
+    def round(nb: Int): Option[Set[Match]] = {
+      if(this.nbRounds == nb)
+        Option(Set(this))
+      else
+        Option(Set())
+    }
+    def contenders: Set[Participant] = Set(this.winner.toString())
     def update(winner: Participant): Match = this
     def findMatchWithParticipant(participant: Participant): Match = ???
-    def allMatches: Set[Match] = ???
+    def allMatches: Set[Match] = Set(this)
     def nbRounds: Int = 1
   }
   /** A CompositeMatch is a Match that opposes the winner of the first match against the winner of the second. */

@@ -151,6 +151,7 @@ class GenerateTournamentFeatureSpec extends FeatureSpec with ShouldMatchers with
 class GenerateTournamentSpec extends FunSpec with ShouldMatchers with defaults {
   describe("Generate a tournament / Generer un tournoi") {
     describe("only uses specified MatchLocations / utilise seulement les terrains specifies") {
+      val tournamentInstance = generate(Constraints(defaultRules, defaultAvailabilities), defaultParticipants)
       assert(true)
     }
     describe("involves all specified participants / inclut tous les participants specifies") {
