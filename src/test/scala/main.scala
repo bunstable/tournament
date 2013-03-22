@@ -86,10 +86,8 @@ class GenerateTournamentFeatureSpec extends FeatureSpec with ShouldMatchers with
       Given("one participant / un seul participant")
       val participantAlone = Set("I'm alone")
       When("the tournament is generated / le tournoi est genere")
-      val constraints = Constraints(defaultRules, defaultAvailabilities)
-      val tournament = generate(constraints, participantAlone)
       Then("an IllegalArgumentException is thrown / un IllegalArgumentException est lance")
-      evaluating { participantAlone.size } should produce [IllegalArgumentException]
+      evaluating { generate(Constraints(defaultRules, defaultAvailabilities), participantAlone) } should produce [IllegalArgumentException]
     }
   }
   
@@ -152,7 +150,7 @@ class GenerateTournamentSpec extends FunSpec with ShouldMatchers with defaults {
   describe("Generate a tournament / Generer un tournoi") {
     describe("only uses specified MatchLocations / utilise seulement les terrains specifies") {
       val tournamentInstance = generate(Constraints(defaultRules, defaultAvailabilities), defaultParticipants)
-      assert(true)
+      (pending)
     }
     describe("involves all specified participants / inclut tous les participants specifies") {
       val tournamentInstance = generate(Constraints(defaultRules, defaultAvailabilities), defaultParticipants)

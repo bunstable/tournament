@@ -79,11 +79,12 @@ object Tournament {
     }
     def contenders: Set[Participant] = Set(this.winner.toString())
     def update(winner: Participant): Match = new SimpleMatch(first, second, winner)
-    def findMatchWithParticipant(participant: Participant): Match = ???/*{
-      if (this.first == participant | this.second == participant)
-        this
-      else
-        ???*/
+    def findMatchWithParticipant(participant: Participant): Match = {
+      var unMatch:Match = ByeMatch("dummy")
+      if (first == participant || second == participant)
+        unMatch = this
+      unMatch
+    }
     def allMatches: Set[Match] = Set(this)
     def nbRounds: Int = 1
   }
@@ -102,7 +103,12 @@ object Tournament {
     }
     def contenders: Set[Participant] = Set(this.winner.toString())
     def update(winner: Participant): Match = this
-    def findMatchWithParticipant(participant: Participant): Match = ???
+    def findMatchWithParticipant(participant: Participant): Match = {
+      var unMatch:Match = ByeMatch("dummy")
+      if (only == participant)
+        unMatch = this
+      unMatch
+     }
     def allMatches: Set[Match] = Set(this)
     def nbRounds: Int = 1
   }
@@ -112,17 +118,32 @@ object Tournament {
       this(first, second)
       winner = Some(winner_)
     }
-    def determinedSubMatches: Set[SimpleMatch] = ???
+    def determinedSubMatches: Set[SimpleMatch] = {
+      var matches :Set[SimpleMatch] = Set()
+      first.determinedSubMatches.foreach(e => matches += e)
+      second.determinedSubMatches.foreach(e=> matches += e)
+      matches
+    }
     def leafSubMatches: Set[SimpleMatch] = ???
     def round(nb: Int): Option[Set[Match]] = ???
     def contenders: Set[Participant] = ???
-    def update(match_ : Match, winner: Participant): Match = ???
-    def update(winner: Participant): Match = ???
+    def update(match_ : Match, winner: Participant): Match = {
+      var unMatch :Match = ByeMatch("dummy")
+      allMatches.foreach(e=>
+        if (e == match_)
+         unMatch = e.update(winner)
+      )
+      unMatch
+    }
+    def update(winner: Participant): Match = new CompositeMatch(first, second, winner)
     def findMatchWithParticipant(participant: Participant): Match = ???
     def allMatches: Set[Match] = ???
     def nbRounds: Int = ???
   }
   
   /** Generate a tournament that satisfies the specified constraints */
-  def generate(constraints: Constraints, participants: Set[Participant]): Tournament = ???
+  def generate(constraints: Constraints, participants: Set[Participant]): Tournament = {
+    if(participants.size <= 1) { throw new IllegalArgumentException("un seul joueur") }
+    ???
+  }
 }
